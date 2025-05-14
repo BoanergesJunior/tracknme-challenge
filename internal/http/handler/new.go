@@ -2,16 +2,20 @@ package http
 
 import (
 	"github.com/BoanergesJunior/tracknme-challenge/internal/http/app/model"
+	"github.com/BoanergesJunior/tracknme-challenge/internal/http/middleware"
 	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
 	router *gin.Engine
-	uc     *model.IUsecase
+	uc     model.IUsecase
 }
 
-func NewHandler(uc *model.IUsecase) *Handler {
+func NewHandler(uc model.IUsecase) *Handler {
 	router := gin.Default()
+
+	router.Use(middleware.ErrorHandler())
+
 	h := &Handler{
 		router: router,
 		uc:     uc,
@@ -33,7 +37,9 @@ func (h *Handler) Routes() {
 		employees.POST("", h.CreateEmployee)
 		employees.GET("", h.ListEmployees)
 		employees.GET("/:id", h.GetEmployee)
+		employees.GET("/zipcode/:zipCode", h.GetEmployeeByZipCode)
 		employees.PUT("/:id", h.UpdateEmployee)
+		employees.PATCH("/:id", h.UpdateEmployeeFields)
 		employees.DELETE("/:id", h.DeleteEmployee)
 	}
 }

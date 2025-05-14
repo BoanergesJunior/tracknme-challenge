@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/BoanergesJunior/tracknme-challenge/cmd/application/setup"
+	"github.com/BoanergesJunior/tracknme-challenge/internal/http/app/repository"
 	"github.com/BoanergesJunior/tracknme-challenge/internal/http/app/usecase"
 	handler "github.com/BoanergesJunior/tracknme-challenge/internal/http/handler"
 	"github.com/joho/godotenv"
@@ -27,9 +28,11 @@ func main() {
 		log.Fatal(err)
 	}
 
-	uc := usecase.New(database)
+	repository := repository.NewRepository(database)
 
-	h := handler.NewHandler(&uc)
+	uc := usecase.New(repository)
+
+	h := handler.NewHandler(uc)
 
 	if err := h.Start(fmt.Sprintf(":%s", os.Getenv("PORT"))); err != nil {
 		log.Fatal(err)

@@ -1,11 +1,27 @@
 package http
 
 import (
+	"github.com/BoanergesJunior/tracknme-challenge/internal/http/app/errors"
+	"github.com/BoanergesJunior/tracknme-challenge/internal/http/app/model"
 	"github.com/gin-gonic/gin"
 )
 
 func (h *Handler) CreateEmployee(c *gin.Context) {
-	c.JSON(200, gin.H{
-		"message": "Hello, World!",
-	})
+	var employee model.EmployeeDTO
+	if err := c.ShouldBindJSON(&employee); err != nil {
+		c.Error(errors.NewAppError(
+			errors.ErrInvalidRequest.Code,
+			errors.ErrInvalidRequest.Message,
+			err,
+		))
+		return
+	}
+
+	employee, err := h.uc.CreateEmployee(employee)
+	if err != nil {
+		c.Error(err)
+		return
+	}
+
+	c.JSON(201, employee)
 }

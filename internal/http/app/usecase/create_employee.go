@@ -20,8 +20,10 @@ func (uc *usecase) CreateEmployee(employee model.EmployeeDTO) (model.EmployeeDTO
 		return model.EmployeeDTO{}, err
 	}
 
-	if err := addressTx.Commit().Error; err != nil {
-		return model.EmployeeDTO{}, err
+	if addressTx != nil {
+		if err := addressTx.Commit().Error; err != nil {
+			return model.EmployeeDTO{}, err
+		}
 	}
 
 	return employee, nil

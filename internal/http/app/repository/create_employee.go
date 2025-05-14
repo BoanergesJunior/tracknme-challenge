@@ -6,5 +6,14 @@ import (
 )
 
 func (repo *repository) CreateEmployeeRepository(employee model.EmployeeDTO) error {
-	return repo.db.Table(helpers.Employees).Create(&employee).Error
+	if err := repo.db.Table(helpers.Employees).Create(&employee).Error; err != nil {
+		return err
+	}
+
+	err := repo.UpdateCache(employee)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

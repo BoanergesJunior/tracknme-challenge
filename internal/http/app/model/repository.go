@@ -20,7 +20,12 @@ type IAddressRepository interface {
 	GetAddressByZipCode(employeeID uuid.UUID, zipCode string) (*AddressDTO, error)
 }
 
+type ICacheRepository interface {
+	UpdateCache(employee EmployeeDTO) error
+}
+
 type IRepository interface {
 	IEmployeeRepository
 	IAddressRepository
+	ICacheRepository
 }

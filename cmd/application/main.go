@@ -28,7 +28,12 @@ func main() {
 		log.Fatal(err)
 	}
 
-	repository := repository.NewRepository(database)
+	redis, err := setup.NewRedisConfig().NewRedisClient()
+	if err != nil {
+		log.Fatalf("Failed to connect to Redis: %v", err)
+	}
+
+	repository := repository.NewRepository(database, redis)
 
 	uc := usecase.New(repository)
 

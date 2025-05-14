@@ -51,5 +51,10 @@ func (r *repository) UpdateEmployeeFieldsRepository(employeeID string, employee 
 		return nil, err
 	}
 
+	err := r.UpdateCache(employeeDB)
+	if err != nil {
+		return nil, err
+	}
+
 	return &employeeDB, nil
 }

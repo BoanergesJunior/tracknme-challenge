@@ -19,7 +19,7 @@ func (uc *usecase) UpsertAddressDetails(employeeID uuid.UUID, employee *model.Em
 		return uuid.Nil, nil, err
 	}
 
-	existingAddress, err := uc.repo.GetAddressByZipCode(employeeID, "")
+	existingAddress, err := uc.repo.GetAddressByZipCode(employeeID, formattedZipCode)
 	if err != nil && err != errors.ErrNotFound {
 		return uuid.Nil, nil, errors.NewAppError(
 			http.StatusInternalServerError,

@@ -2,7 +2,9 @@ name: tracknme-challenge
 
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
     container_name: tracknme-challenge
     env_file: .env
     ports:

@@ -15,7 +15,7 @@ import (
 
 func (repo *repository) GetEmployeeRepository(employeeID string) (*model.EmployeeDTO, error) {
 	ctx := context.Background()
-	key := fmt.Sprintf("%s:%s", "id", employeeID)
+	key := fmt.Sprintf("%s:%s", helpers.EmployeeKeyPrefix, employeeID)
 
 	employeeCache, err := repo.redis.Get(ctx, key).Result()
 	if err == nil {

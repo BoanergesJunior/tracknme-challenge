@@ -8,12 +8,10 @@ import (
 func (uc *usecase) CreateEmployee(employee model.EmployeeDTO) (model.EmployeeDTO, error) {
 	employee.ID = uuid.New()
 
-	addressID, addressTx, err := uc.UpsertAddressDetails(employee.ID, &employee)
+	addressTx, err := uc.UpsertAddressDetails(employee.ID, &employee, nil)
 	if err != nil {
 		return model.EmployeeDTO{}, err
 	}
-
-	employee.Address = addressID.String()
 
 	err = uc.repo.CreateEmployeeRepository(employee)
 	if err != nil {

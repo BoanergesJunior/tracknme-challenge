@@ -13,5 +13,8 @@ CREATE TABLE IF NOT EXISTS tracknme.addresses (
     ibge_code VARCHAR(255),
     gia_code VARCHAR(255),
     area_code VARCHAR(3),
-    siafi_code VARCHAR(255)
+    siafi_code VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP
 );

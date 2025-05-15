@@ -40,7 +40,7 @@ func (r *repository) GetAddressByZipCode(employeeID uuid.UUID, zipCode string) (
 }
 
 func (r *repository) GetAddressByZipCodeCache(zipCode string) (*model.AddressDTO, error) {
-	key := fmt.Sprintf("%s:%s", "zipcode", zipCode)
+	key := fmt.Sprintf("%s:%s", helpers.AddressKeyPrefix, zipCode)
 	addressCache, err := r.GetZipCodeCache(context.Background(), key)
 	if err != nil && err.Error() != "redis: nil" {
 		return nil, err

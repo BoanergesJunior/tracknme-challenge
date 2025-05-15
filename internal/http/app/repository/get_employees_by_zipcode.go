@@ -12,7 +12,7 @@ import (
 
 func (r *repository) GetEmployeesByZipCodeRepository(zipCode string) ([]*model.EmployeeDTO, error) {
 	ctx := context.Background()
-	key := fmt.Sprintf("zipcode:%s", zipCode)
+	key := fmt.Sprintf("%s:%s", helpers.AddressKeyPrefix, zipCode)
 
 	employeesCache, err := r.redis.LRange(ctx, key, 0, -1).Result()
 	if err == nil && len(employeesCache) > 0 {

@@ -7,5 +7,8 @@ CREATE TABLE IF NOT EXISTS tracknme.employees (
     address VARCHAR(255),
     neighborhood VARCHAR(255),
     city VARCHAR(255),
-    state VARCHAR(2)
+    state VARCHAR(2),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP
 );

@@ -16,7 +16,7 @@ type IEmployeeUsecase interface {
 }
 
 type IAddressUsecase interface {
-	UpsertAddressDetails(employeeID uuid.UUID, employee *EmployeeDTO) (uuid.UUID, *gorm.DB, error)
+	UpsertAddressDetails(employeeID uuid.UUID, employee *EmployeeDTO, address *AddressDTO) (*gorm.DB, error)
 }
 
 type IUsecase interface {

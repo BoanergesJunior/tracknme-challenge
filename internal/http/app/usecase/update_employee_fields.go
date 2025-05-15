@@ -20,12 +20,12 @@ func (uc *usecase) UpdateEmployeeFields(employeeID string, employee model.Employ
 	}
 
 	var addressUpdateTx *gorm.DB
+	var newAddress *model.AddressDTO
 	if employee.ZipCode != employeeDB.ZipCode {
-		addressID, addressTx, err := uc.UpsertAddressDetails(uuid.MustParse(employeeID), &employee)
+		addressTx, err := uc.UpsertAddressDetails(uuid.MustParse(employeeID), &employee, newAddress)
 		if err != nil {
 			return nil, err
 		}
-		employee.Address = addressID.String()
 		addressUpdateTx = addressTx
 	}
 

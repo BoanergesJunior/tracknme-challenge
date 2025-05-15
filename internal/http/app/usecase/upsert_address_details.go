@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"strings"
 
 	"github.com/BoanergesJunior/tracknme-challenge/internal/http/app/errors"
 	"github.com/BoanergesJunior/tracknme-challenge/internal/http/app/model"
@@ -13,56 +12,48 @@ import (
 	"gorm.io/gorm"
 )
 
-func (uc *usecase) UpsertAddressDetails(employeeID uuid.UUID, employee *model.EmployeeDTO) (uuid.UUID, *gorm.DB, error) {
-	formattedZipCode, err := formatZipCode(employee.ZipCode)
-	if err != nil {
-		return uuid.Nil, nil, err
+func (uc *usecase) UpsertAddressDetails(employeeID uuid.UUID, employee *model.EmployeeDTO, address *model.AddressDTO) (*gorm.DB, error) {
+	if address == nil {
+		address = new(model.AddressDTO)
 	}
 
-	existingAddress, err := uc.repo.GetAddressByZipCode(employeeID, formattedZipCode)
+	existingAddress, err := uc.repo.GetAddressByZipCode(employeeID, employee.ZipCode)
 	if err != nil && err != errors.ErrNotFound {
-		return uuid.Nil, nil, errors.NewAppError(
+		return nil, errors.NewAppError(
 			http.StatusInternalServerError,
 			"Erro ao verificar endereço existente",
 			err,
 		)
 	}
 
-	if existingAddress != nil && existingAddress.ZipCode == formattedZipCode {
-		return existingAddress.ID, nil, nil
+	if existingAddress != nil && existingAddress.ZipCode == employee.ZipCode {
+		return nil, nil
 	}
 
-	newAddress, err := uc.fetchAddressFromAPI(formattedZipCode)
+	newAddress, err := uc.fetchAddressFromAPI(employee.ZipCode)
 	if err != nil {
-		return uuid.Nil, nil, err
+		return nil, err
 	}
 
-	addressToSave := prepareAddressForUpsert(existingAddress, newAddress, employeeID, formattedZipCode)
+	addressToSave := prepareAddressForUpsert(existingAddress, newAddress, employeeID, employee.ZipCode)
 
-	tx, err := uc.repo.UpsertAddressRepository(addressToSave)
+	tx, err := uc.repo.UpsertAddressRepository(employeeID, addressToSave)
 	if err != nil {
-		return uuid.Nil, nil, errors.NewAppError(
+		return nil, errors.NewAppError(
 			http.StatusInternalServerError,
 			"Erro ao salvar endereço",
 			err,
 		)
 	}
 
+	*address = *newAddress
+
+	employee.Address = newAddress.Street
 	employee.City = newAddress.City
 	employee.State = newAddress.State
 	employee.Neighborhood = newAddress.Neighborhood
 
-	return addressToSave.ID, tx, nil
-}
-
-func formatZipCode(zipCode string) (string, error) {
-	cleanZipCode := strings.ReplaceAll(zipCode, "-", "")
-
-	if len(cleanZipCode) != 8 {
-		return "", errors.ErrInvalidZipCode
-	}
-
-	return fmt.Sprintf("%s-%s", cleanZipCode[:5], cleanZipCode[5:]), nil
+	return tx, nil
 }
 
 func (uc *usecase) fetchAddressFromAPI(zipCode string) (*model.AddressDTO, error) {

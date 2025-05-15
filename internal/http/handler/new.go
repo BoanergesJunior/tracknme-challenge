@@ -1,6 +1,8 @@
 package http
 
 import (
+	"net/http"
+
 	"github.com/BoanergesJunior/tracknme-challenge/internal/http/app/model"
 	"github.com/BoanergesJunior/tracknme-challenge/internal/http/middleware"
 	"github.com/gin-gonic/gin"
@@ -46,4 +48,8 @@ func (h *Handler) Routes() {
 
 func (h *Handler) Start(addr string) error {
 	return h.router.Run(addr)
+}
+
+func (h *Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	h.router.ServeHTTP(w, r)
 }

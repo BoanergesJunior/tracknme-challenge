@@ -32,7 +32,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	redis, err := setup.NewRedisConfig().NewRedisClient()
+	redis, err := setup.NewRedisClient()
 	if err != nil {
 		log.Fatalf("Failed to connect to Redis: %v", err)
 	}

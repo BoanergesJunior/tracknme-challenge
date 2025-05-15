@@ -30,40 +30,38 @@ func NewRedisConfig() *RedisConfig {
 	}
 }
 
-func (conn *RedisConfig) NewRedisClient() (*redis.Client, error) {
-	client := redis.NewClient(&redis.Options{
-		Addr:         fmt.Sprintf("%s:%s", conn.Host, conn.Port),
-		Password:     conn.Password,
-		DB:           conn.DB,
-		DialTimeout:  5 * time.Second,
-		ReadTimeout:  3 * time.Second,
-		WriteTimeout: 3 * time.Second,
-		PoolSize:     10,
-		MinIdleConns: 5,
-	})
+func NewRedisClient() (*redis.Client, error) {
+	environment := os.Getenv("ENVIRONMENT")
+	var client *redis.Client
+
+	if environment == "production" {
+		redisURL := os.Getenv("REDIS_URL")
+		if redisURL == "" {
+			return nil, fmt.Errorf("REDIS_URL not set")
+		}
+		opt, err := redis.ParseURL(redisURL)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse REDIS_URL: %v", err)
+		}
+		client = redis.NewClient(opt)
+	} else {
+		host := os.Getenv("REDIS_HOST")
+		port := os.Getenv("REDIS_PORT")
+		password := os.Getenv("REDIS_PASSWORD")
+		db := 0
+
+		client = redis.NewClient(&redis.Options{
+			Addr:     fmt.Sprintf("%s:%s", host, port),
+			Password: password,
+			DB:       db,
+		})
+	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
 	if err := client.Ping(ctx).Err(); err != nil {
-		if conn.Host == "host.docker.internal" {
-			client = redis.NewClient(&redis.Options{
-				Addr:         fmt.Sprintf("localhost:%s", conn.Port),
-				Password:     conn.Password,
-				DB:           conn.DB,
-				DialTimeout:  5 * time.Second,
-				ReadTimeout:  3 * time.Second,
-				WriteTimeout: 3 * time.Second,
-				PoolSize:     10,
-				MinIdleConns: 5,
-			})
-
-			if err := client.Ping(ctx).Err(); err != nil {
-				return nil, fmt.Errorf("failed to connect to Redis: %v", err)
-			}
-		} else {
-			return nil, fmt.Errorf("failed to connect to Redis: %v", err)
-		}
+		return nil, fmt.Errorf("failed to connect to Redis: %v", err)
 	}
 
 	return client, nil

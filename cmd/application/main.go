@@ -13,11 +13,15 @@ import (
 )
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		errMsg := fmt.Errorf("error loading .env file: %v", err)
-		log.Fatalf("%v", errMsg)
-		return
+	environment := os.Getenv("ENVIRONMENT")
+
+	if environment != "production" {
+		err := godotenv.Load()
+		if err != nil {
+			errMsg := fmt.Errorf("error loading .env file: %v", err)
+			log.Fatalf("%v", errMsg)
+			return
+		}
 	}
 
 	database, err := setup.SetupDatabase(setup.Migrations{

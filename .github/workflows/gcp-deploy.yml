@@ -41,4 +41,4 @@ jobs:
             --region us-central1 \
             --allow-unauthenticated \
             --add-cloudsql-instances=winter-return-459915-s4:us-central1:tracknme-db \
-            --set-env-vars="DATABASE_POSTGRES=${{ secrets.DATABASE_POSTGRES }},ZIP_CODE_API=${{ secrets.ZIP_CODE_API }},REDIS_HOST=${{ secrets.REDIS_HOST }},REDIS_PORT=${{ secrets.REDIS_PORT }},REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" 
+            --set-env-vars="ENVIRONMENT=${{ secrets.ENVIRONMENT }},DATABASE_POSTGRES=${{ secrets.DATABASE_POSTGRES }},ZIP_CODE_API=${{ secrets.ZIP_CODE_API }},REDIS_HOST=${{ secrets.REDIS_HOST }},REDIS_PORT=${{ secrets.REDIS_PORT }},REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" 

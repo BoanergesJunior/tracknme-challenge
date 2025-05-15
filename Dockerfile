@@ -1,21 +1,22 @@
-FROM golang:1.23.3-alpine
+FROM golang:1.23.3-alpine AS builder
 
 WORKDIR /app
 
-# Copy go mod and sum files
 COPY go.mod go.sum ./
 
-# Download all dependencies
 RUN go mod download
 
-# Copy the source code and migrations
 COPY . .
 
-# Build the application
-RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd/application
+RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd/api
 
-# Expose the port
-EXPOSE ${PORT}
+FROM alpine:latest
 
-# Command to run the executable
+WORKDIR /app
+
+COPY --from=builder /app/main .
+COPY --from=builder /app/.env .
+
+EXPOSE 8080
+
 CMD ["./main"]

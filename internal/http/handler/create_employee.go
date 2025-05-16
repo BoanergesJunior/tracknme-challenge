@@ -17,11 +17,11 @@ func (h *Handler) CreateEmployee(c *gin.Context) {
 		return
 	}
 
-	employee, err := h.uc.CreateEmployee(employee)
+	createdEmployee, err := h.uc.CreateEmployee(employee)
 	if err != nil {
 		c.Error(err)
 		return
 	}
 
-	c.JSON(201, employee)
+	c.JSON(201, createdEmployee)
 }

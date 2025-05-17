@@ -2,7 +2,7 @@
 
 ## 🚀 Execução Local
 
-Para executar o projeto localmente, você precisa ter o Docker instalado em sua máquina. Para parar todos os containers em execução, utilize o comando:
+Para executar o projeto localmente, você precisa ter o Docker instalado em sua máquina. Para rodar todos os containers, utilize o comando:
 
 ```bash
 docker compose up -d --build
